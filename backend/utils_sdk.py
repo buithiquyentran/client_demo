@@ -13,10 +13,6 @@ import tempfile
 
 from numpy import number
 
-# Add SDK to path
-SDK_PATH = Path(__file__).parent.parent.parent / "photostore" / "sdk" / "python"
-sys.path.insert(0, str(SDK_PATH))
-
 from photostore_sdk import PhotoStoreClient, PhotoStoreException
 
 # Initialize PhotoStore client once - that's it!

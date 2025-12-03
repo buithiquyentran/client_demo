@@ -7,10 +7,10 @@
     "stock": 0,
     "status": "string",
     "category": "string",
-    "image": 154,
-    "image_id": 154,
+    "image": "http://localhost:8000/uploads/my-test/home/7487fa8c182c4b8ab330e90c0eb0c72f.jpg",
+    "image_id": 156,
     "createdAt": "2025-12-03T05:55:20.695704",
-    "updatedAt": "2025-12-03T07:42:28.919535"
+    "updatedAt": "2025-12-03T08:56:43.059286"
   },
   {
     "id": "98c423e7-950d-4302-a8f3-37d45aa4c167",
