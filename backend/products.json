@@ -1,0 +1,41 @@
+[
+  {
+    "id": "d96af265-59b2-4ca5-94e2-e1ea96e6dc5c",
+    "name": "string",
+    "description": "string",
+    "price": 0.0,
+    "stock": 0,
+    "status": "string",
+    "category": "string",
+    "image": 154,
+    "image_id": 154,
+    "createdAt": "2025-12-03T05:55:20.695704",
+    "updatedAt": "2025-12-03T07:42:28.919535"
+  },
+  {
+    "id": "98c423e7-950d-4302-a8f3-37d45aa4c167",
+    "name": "sss",
+    "description": "ssss",
+    "price": 0.0,
+    "stock": 0,
+    "status": "draft",
+    "category": "",
+    "image": "http://localhost:8000/uploads/my-test/home/337d399165974dbbb0979b16a1044fcc.jpg",
+    "image_id": 147,
+    "createdAt": "2025-12-03T07:21:08.029645",
+    "updatedAt": "2025-12-03T07:21:08.029645"
+  },
+  {
+    "id": "88701558-d8ba-4fe0-82ea-f9824b0ef6f7",
+    "name": "fff",
+    "description": "fff",
+    "price": 0.0,
+    "stock": 0,
+    "status": "draft",
+    "category": "",
+    "image": "http://localhost:8000/uploads/my-test/home/3a572dded54b4010b85e997681e7a367.jpg",
+    "image_id": 155,
+    "createdAt": "2025-12-03T07:57:51.307786",
+    "updatedAt": "2025-12-03T07:57:51.307786"
+  }
+]
