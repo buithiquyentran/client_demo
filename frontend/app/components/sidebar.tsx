@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Products", href: "/dashboard", icon: Package },
-  { name: "API Keys", href: "/dashboard/keys", icon: Key },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
@@ -23,7 +22,7 @@ export function Sidebar() {
             <Package className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="font-mono text-lg font-semibold text-sidebar-foreground">
-            API Tester
+           Dashboard
           </span>
         </div>
       </div>

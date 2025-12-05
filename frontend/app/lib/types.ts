@@ -12,8 +12,8 @@ export interface Product {
   stock: number;
   status: "active" | "draft" | "archived";
   category?: string;
-  image_origin_url: string;
-  image_id: number;
+  image_origin_url?: string;
+  image_id?: number;
   createdAt: string;
   updatedAt: string;
 }

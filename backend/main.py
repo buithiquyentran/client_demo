@@ -56,7 +56,7 @@ class Product(BaseModel):
     status: str
     category: str
     image_origin_url: Optional[str] = None
-    image_id: int
+    image_id: Optional[int] = None
     createdAt: str
     updatedAt: str
 
@@ -200,7 +200,7 @@ async def update_product(
             raise HTTPException(400, "Upload failed or file_url missing")
 
         # # xoá ảnh cũ nếu có
-        if product.get("image") is not None:
+        if product.get("image") is not None and product.get("image_id") is not None:
             delete_image(product["image_id"], permanently=False)
 
         product["image"] = image_origin_url
@@ -245,6 +245,7 @@ def delete_product(product_id: str):
 async def search_image_route(file: UploadFile = File(...)):
     """
     Upload 1 ảnh để tìm các sản phẩm có hình tương tự.
+    Trả về theo thứ tự độ tương đồng từ SDK (cao → thấp)
     """
     try:
         # 🧠 Gọi hàm search_image trong utils để nhận danh sách URL tương tự
@@ -252,43 +253,26 @@ async def search_image_route(file: UploadFile = File(...)):
         if not search_results:
             return {"status": "success", "message": "Không tìm thấy hình tương tự", "data": []}
 
-        # 🧩 Lấy danh sách file_url từ kết quả embedding search
-        # ví dụ: ['http://localhost:8000/uploads/abc.jpg', '...']
-        similar_urls = [item["file_url"] for item in search_results if "file_url" in item]
-
         # 📂 Đọc toàn bộ products.json
         products = load_products()
+        
+        # 🗺️ Tạo map để lookup nhanh: image_url -> product
+        product_map = {p.get("image"): p for p in products if p.get("image")}
 
-        # 🔍 Lọc các product có image nằm trong danh sách tương tự
-        matched_products = [
-            p for p in products if p.get("image") in similar_urls
-        ]
+        # 🔍 Match products theo thứ tự của search_results (giữ nguyên order sort theo similarity)
+        matched_products = []
+        for item in search_results:
+            file_url = item.get("file_url")
+            if file_url and file_url in product_map:
+                # Thêm similarity score vào product để hiển thị nếu cần
+                product = product_map[file_url].copy()
+                # product["similarity_score"] = item.get("similarity", 0)  # Optional
+                matched_products.append(product)
 
         return {
             "status": "success",
             "message": f"Tìm thấy {len(matched_products)} sản phẩm tương tự",
             "data": matched_products
-        }
-
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        import traceback
-        print("❌ Lỗi search image:", str(e))
-        print(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
-    """
-    Nhận 1 file ảnh, gọi hàm search_image trong utils,
-    và trả về kết quả.
-    """
-    try:
-        # Gọi hàm search_image từ utils
-        results = await search_image(file)
-
-        return {
-            "status": "success",
-            "message": "Search completed successfully",
-            "data": results
         }
 
     except HTTPException as e:

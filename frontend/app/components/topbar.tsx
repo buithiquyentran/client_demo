@@ -27,12 +27,11 @@ export function Topbar({ apiKey }: TopbarProps) {
   return (
     <div className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
       <div className="flex items-center gap-4">
-        <h1 className="text-lg font-semibold text-card-foreground">
-          E-commerce API Dashboard
+        <h1 className="text-lg font-semibold text-card-foreground ">
+          Electronics E-commerce Platform
         </h1>
       </div>
       <div className="flex items-center gap-4">
-        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">

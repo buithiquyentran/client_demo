@@ -11,6 +11,40 @@ const api = axios.create({
   },
 });
 
+// 🎯 Loading state callbacks (sẽ được set từ component)
+let loadingCallbacks: {
+  onStart?: () => void;
+  onEnd?: () => void;
+} = {};
+
+export function setLoadingCallbacks(callbacks: typeof loadingCallbacks) {
+  loadingCallbacks = callbacks;
+}
+
+// 📊 Request interceptor - Bắt đầu loading
+api.interceptors.request.use(
+  (config) => {
+    loadingCallbacks.onStart?.();
+    return config;
+  },
+  (error) => {
+    loadingCallbacks.onEnd?.();
+    return Promise.reject(error);
+  }
+);
+
+// 📊 Response interceptor - Kết thúc loading
+api.interceptors.response.use(
+  (response) => {
+    loadingCallbacks.onEnd?.();
+    return response;
+  },
+  (error) => {
+    loadingCallbacks.onEnd?.();
+    return Promise.reject(error);
+  }
+);
+
 // 🧩 Xử lý lỗi chung
 function handleError(error: any) {
   if (axios.isAxiosError(error)) {
