@@ -25,8 +25,7 @@ app.add_middleware(
 
 
 DATA_FILE = "products.json"
-# from utils_sdk import upload_files, get_image, delete_image, search_by_image
-from utils_sdk import get_thumbnail, upload_file, get_image, search_by_image, delete_image
+from utils_sdk import get_thumbnail, upload_file, get_image, search_image, delete_image
 
 # ============================
 # 🔹 Helper functions
@@ -248,8 +247,8 @@ async def search_image_route(file: UploadFile = File(...)):
     Upload 1 ảnh để tìm các sản phẩm có hình tương tự.
     """
     try:
-        # 🧠 Gọi hàm search_by_image trong utils để nhận danh sách URL tương tự
-        search_results = await search_by_image(file)
+        # 🧠 Gọi hàm search_image trong utils để nhận danh sách URL tương tự
+        search_results = await search_image(file)
         if not search_results:
             return {"status": "success", "message": "Không tìm thấy hình tương tự", "data": []}
 
@@ -279,12 +278,12 @@ async def search_image_route(file: UploadFile = File(...)):
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
     """
-    Nhận 1 file ảnh, gọi hàm search_by_image trong utils,
+    Nhận 1 file ảnh, gọi hàm search_image trong utils,
     và trả về kết quả.
     """
     try:
-        # Gọi hàm search_by_image từ utils
-        results = await search_by_image(file)
+        # Gọi hàm search_image từ utils
+        results = await search_image(file)
 
         return {
             "status": "success",

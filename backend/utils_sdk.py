@@ -9,17 +9,20 @@ import os
 from pathlib import Path
 from fastapi import HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse
-import tempfile
+from dotenv import load_dotenv
 
 from numpy import number
 
 from photostore_sdk import PhotoStoreClient, PhotoStoreException
 
+# Load environment variables from .env file
+load_dotenv()
+
 # Initialize PhotoStore client once - that's it!
 photostore = PhotoStoreClient(
-    api_key="pk_4c7pXZYFMap17_pM-wCO1RQ_9dW_7XPN-TqD-BatST4",
-    api_secret="sk_7wzi1M5kq8a_k1cnxtolwMNqWVT4KtAVNw5rNz0uob4TDD9dLj6vFtQfoS3H99qU",
-    base_url="http://localhost:8000",
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
+    base_url=os.getenv("API_BASE_URL"),
 )
 
 
@@ -72,51 +75,35 @@ async def upload_file(
 ):
     """Upload single file using SDK - simple and clean!"""
     try:
-        temp_dir = tempfile.gettempdir()
-        
-        # Save file temporarily
-        temp_path = os.path.join(temp_dir, file.filename)
+        # Read file content directly - no need to save to disk!
         content = await file.read()
-        with open(temp_path, "wb") as f:
-            f.write(content)
         
-        # Upload with SDK (SDK accepts list of files)
+        # Detect content type
+        content_type = file.content_type or "application/octet-stream"
+        
+        # Upload directly with file bytes
         result = photostore.upload_files(
-            files=[temp_path],
+            file_objects=[(file.filename, content, content_type)],
             folder_slug=folder_slug,
             is_private=is_private
         )
-        
-        # Cleanup
-        try:
-            os.remove(temp_path)
-        except:
-            pass
         
         return result
     except PhotoStoreException as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-async def search_by_image(file: UploadFile = File(...), k: int = 10):
+async def search_image(file: UploadFile = File(...), k: int = 10):
     """Search similar images - SDK handles everything!"""
     try:
-        temp_dir = tempfile.gettempdir()
-        temp_path = os.path.join(temp_dir, file.filename)
-        
         content = await file.read()
-        with open(temp_path, "wb") as f:
-            f.write(content)
+        # Pass file bytes directly to SDK
+        results = photostore.search_image(
+            file=content,
+            filename=file.filename,
+            k=k
+        )
         
-        # Simple SDK call - no authentication code!
-        results = photostore.search_image(temp_path, k=k)
-        
-        # Cleanup
-        try:
-            os.remove(temp_path)
-        except:
-            pass
-        
-        return results.get("data", [])
+        return results.get("data")
     except PhotoStoreException as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -124,8 +111,7 @@ async def search_by_image(file: UploadFile = File(...), k: int = 10):
 def search_by_text(query: str, k: int = 10):
     """Search by text - one simple function call!"""
     try:
-        results = photostore.search_text(query, k=k)
-        # Response format: {"data": {"searchResults": [...]}}
+        results = photostore.search_text(query_text=query, k=k)
         return results.get("data", {}).get("searchResults", [])
     except PhotoStoreException as e:
         raise HTTPException(status_code=400, detail=str(e))
